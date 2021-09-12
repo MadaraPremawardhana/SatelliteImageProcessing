@@ -1,0 +1,63 @@
+// ImageProcessing_1.cpp : This file contains the 'main' function. Program execution begins and ends there.
+#include <opencv2\imgcodecs.hpp>
+#include <opencv2\highgui.hpp>
+#include <opencv2\imgproc.hpp>
+#include <opencv2\opencv.hpp>
+
+#include <iostream>
+
+using namespace cv;
+using namespace std;
+
+int main(int argc, char* argv[])
+{
+	Mat img = imread("Resources/Sat3.jpg");
+
+	if (!img.data) {
+		cout << "Could not load the image" << std::endl;
+		waitKey(0);
+		return -1;
+	}
+
+	int h = img.rows;
+	int w = img.cols;
+	int val = 0;
+	int x = 0;
+	float y = 0.0;
+	cout << "Width: " << w << endl;
+	cout << "Height :" << h << endl;
+
+	Mat Copy = img.clone();
+	Mat Copy2 = img.clone();
+	Mat BinaryImageGround;
+	Mat BinaryImageGreen;
+	
+	cvtColor(img, Copy, COLOR_BGR2HSV,0);
+	cvtColor(img, Copy, COLOR_BGR2GRAY,0);
+	threshold(Copy, BinaryImageGround,0, 255, THRESH_BINARY|THRESH_OTSU);
+
+		namedWindow("Image", WINDOW_AUTOSIZE);
+		imshow("Image", img);
+
+		namedWindow("Display Processed1", WINDOW_AUTOSIZE);
+		imshow("Display Processed1", BinaryImageGround);
+		imwrite("GroundMask.png", BinaryImageGround);
+
+	cvtColor(img, Copy2, COLOR_BGR2HSV, 0);
+	cvtColor(Copy2, Copy2, COLOR_BGR2GRAY, 0);
+	threshold(Copy2, BinaryImageGreen, 0, 255, THRESH_BINARY | THRESH_OTSU);
+
+		namedWindow("Display Processed2", WINDOW_AUTOSIZE);
+		imshow("Display Processed2", BinaryImageGreen);
+		imwrite("GreenMask.png", BinaryImageGreen);
+
+		waitKey(0);
+		destroyWindow("Image");
+		destroyWindow("Display Processed");
+		img.release();
+		BinaryImageGround.release();
+
+		
+
+		return 0;
+	}
